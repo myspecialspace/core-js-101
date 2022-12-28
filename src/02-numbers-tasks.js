@@ -19,8 +19,8 @@
  *   5, 10 => 50
  *   5, 5  => 25
  */
-function getRectangleArea(/* width, height */) {
-  throw new Error('Not implemented');
+function getRectangleArea(width, height) {
+  return width * height;
 }
 
 
@@ -34,9 +34,10 @@ function getRectangleArea(/* width, height */) {
  *   5    => 31.41592653589793
  *   3.14 => 19.729201864543903
  *   0    => 0
+ *   l = 2pi*r
  */
-function getCircleCircumference(/* radius */) {
-  throw new Error('Not implemented');
+function getCircleCircumference(radius) {
+  return 2 * Math.PI * radius;
 }
 
 /**
@@ -51,8 +52,8 @@ function getCircleCircumference(/* radius */) {
  *  10, 0  => 5
  *  -3, 3  => 0
  */
-function getAverage(/* value1, value2 */) {
-  throw new Error('Not implemented');
+function getAverage(number1, number2) {
+  return number1 / 2 + number2 / 2;
 }
 
 /**
@@ -69,9 +70,12 @@ function getAverage(/* value1, value2 */) {
  *   (0,0) (0,1)    => 1
  *   (0,0) (1,0)    => 1
  *   (-5,0) (10,-10) => 18.027756377319946
+ *
+ * d=√((x1-x2)^2+(y1-y2)^2)
+ * (((x2 - x1) ** 2) + ((y2 - y1) ** 2));
  */
-function getDistanceBetweenPoints(/* x1, y1, x2, y2 */) {
-  throw new Error('Not implemented');
+function getDistanceBetweenPoints(x1, y1, x2, y2) {
+  return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
 }
 
 /**
@@ -86,8 +90,8 @@ function getDistanceBetweenPoints(/* x1, y1, x2, y2 */) {
  *   x + 8 = 0       => -8
  *   5*x = 0         => 0
  */
-function getLinearEquationRoot(/* a, b */) {
-  throw new Error('Not implemented');
+function getLinearEquationRoot(a, b) {
+  return -b / a;
 }
 
 
@@ -108,9 +112,14 @@ function getLinearEquationRoot(/* a, b */) {
  *   (0,-1) (1,0)    => π/2
  *   (0,1) (0,1)     => 0
  *   (0,1) (1,2)     => 0
+ *
+ * Угол между двумя ненулевыми векторами находится с помощью вычисления скалярного произведения.
+ * По определению скалярное произведение равно произведению длин векторов на косинус угла между ними
+ * (скалярное произведение для двух векторов с координатами (x1; y1) и (x2; y2)
+ * вычисляется по формуле: x1x2 + y1y2).
  */
-function getAngleBetweenVectors(/* x1, y1, x2, y2 */) {
-  throw new Error('Not implemented');
+function getAngleBetweenVectors(x1, y1, x2, y2) {
+  return Math.acos((x1 * x2) + (y1 * y2));
 }
 
 /**
@@ -124,9 +133,10 @@ function getAngleBetweenVectors(/* x1, y1, x2, y2 */) {
  *    37     => 7
  *     5     => 5
  *     0     => 0
+ * 37:10=3,7 => return 7 (остаток)
  */
-function getLastDigit(/* value */) {
-  throw new Error('Not implemented');
+function getLastDigit(value) {
+  return value % 10;
 }
 
 
@@ -140,9 +150,10 @@ function getLastDigit(/* value */) {
  *    '100'     => 100
  *     '37'     => 37
  * '-525.5'     => -525.5
+ * string to number => parseFloat(value); Number(value); +value; x * 1;
  */
-function parseNumberFromString(/* value */) {
-  throw new Error('Not implemented');
+function parseNumberFromString(value) {
+  return Number(value);
 }
 
 /**
@@ -157,9 +168,10 @@ function parseNumberFromString(/* value */) {
  *   1,1,1   => 1.7320508075688772
  *   3,3,3   => 5.196152422706632
  *   1,2,3   => 3.741657386773941
+ *   d=√(a^2+b^2+c^2)
  */
-function getParallelepipedDiagonal(/* a, b, c */) {
-  throw new Error('Not implemented');
+function getParallelepipedDiagonal(a, b, c) {
+  return Math.sqrt(a * a + b * b + c * c);
 }
 
 
@@ -179,9 +191,11 @@ function getParallelepipedDiagonal(/* a, b, c */) {
  *   1678, 1  => 1680
  *   1678, 2  => 1700
  *   1678, 3  => 2000
+ * Возведение в степень **
+ * (1234, 1 => 1230) ==> 1234 : 10^1 = 123,4 ==> Math.round округляем 123 ==> 123*10^1 = 1230
  */
-function roundToPowerOfTen(/* num, pow */) {
-  throw new Error('Not implemented');
+function roundToPowerOfTen(num, pow) {
+  return Math.round(num / (10 ** pow)) * (10 ** pow);
 }
 
 /**
@@ -200,9 +214,18 @@ function roundToPowerOfTen(/* num, pow */) {
  *   12 => false
  *   16 => false
  *   17 => true
+ * prime - простое число true, иначе false =>
+ * деится на само себя и на 1
+ * 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37,
+ * 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97
  */
-function isPrime(/* n */) {
-  throw new Error('Not implemented');
+function isPrime(number) {
+  for (let i = 2; i < number; i += 1) {
+    if (number % i === 0) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /**
@@ -220,8 +243,8 @@ function isPrime(/* n */) {
  *   toNumber(42, 0) => 42
  *   toNumber(new Number(42), 0) => 42
  */
-function toNumber(/* value, def */) {
-  throw new Error('Not implemented');
+function toNumber(value, def) {
+  return Number(value) || def;
 }
 
 module.exports = {
