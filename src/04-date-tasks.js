@@ -18,9 +18,10 @@
  *    'December 17, 1995 03:24:00'    => Date()
  *    'Tue, 26 Jan 2016 13:48:02 GMT' => Date()
  *    'Sun, 17 May 1998 03:00:00 GMT+01' => Date()
+ *     new Date() => When called as a constructor, returns a new Date object.
  */
-function parseDataFromRfc2822(/* value */) {
-  throw new Error('Not implemented');
+function parseDataFromRfc2822(value) {
+  return new Date(value);
 }
 
 /**
@@ -34,8 +35,8 @@ function parseDataFromRfc2822(/* value */) {
  *    '2016-01-19T16:07:37+00:00'    => Date()
  *    '2016-01-19T08:07:37Z' => Date()
  */
-function parseDataFromIso8601(/* value */) {
-  throw new Error('Not implemented');
+function parseDataFromIso8601(value) {
+  return new Date(value);
 }
 
 
@@ -52,9 +53,22 @@ function parseDataFromIso8601(/* value */) {
  *    Date(2001,1,1)    => false
  *    Date(2012,1,1)    => true
  *    Date(2015,1,1)    => false
+ *
+ * const moonLanding = new Date('July 20, 69 00:20:18');
+   console.log(moonLanding.getFullYear()); // expected output: 1969
+
+   const birthday = new Date('August 19, 1975 23:15:30');
+   const date1 = birthday.getDate(); // только число 19 из даты вытягиваем
+   console.log(date1); // expected output: 19
+
+   getDate() method returns the day of the month for the specified date according to local time.
+   getFullYear() returns year
+   в високосном году в Феврале 29 дней
+   new Date(year, monthIndex, day) => new Date(year, 1, 29)
  */
-function isLeapYear(/* date */) {
-  throw new Error('Not implemented');
+function isLeapYear(date) {
+  const fullYear = (new Date(date)).getFullYear();
+  return new Date(fullYear, 1, 29).getDate() === 29;
 }
 
 
@@ -72,9 +86,22 @@ function isLeapYear(/* date */) {
  *    Date(2000,1,1,10,0,0),  Date(2000,1,1,10,0,20)        => "00:00:20.000"
  *    Date(2000,1,1,10,0,0),  Date(2000,1,1,10,0,0,250)     => "00:00:00.250"
  *    Date(2000,1,1,10,0,0),  Date(2000,1,1,15,20,10,453)   => "05:20:10.453"
+ *    Math.abs => модуль числа
+ *    getHours() => только часы
+ *    getMinutes()  => только минуты
+ *    getSeconds()   => только секунды
+ *    getMilliseconds()  => только милисек
+ *    padStart(2, '0') => заполняет строку вначале слева до нужной длины другой строкой
+ *    str.padStart(targetLength [, padString])
+ *   'abc'.padStart(8, "0");     // "00000abc"
  */
-function timeSpanToString(/* startDate, endDate */) {
-  throw new Error('Not implemented');
+function timeSpanToString(startDate, endDate) {
+  const HH = Math.abs(startDate.getHours() - endDate.getHours()).toString().padStart(2, '0'); // hours
+  const mm = Math.abs(startDate.getMinutes() - endDate.getMinutes()).toString().padStart(2, '0'); // minutes
+  const ss = Math.abs(startDate.getSeconds() - endDate.getSeconds()).toString().padStart(2, '0'); // seconds
+  const sss = Math.abs(startDate.getMilliseconds() - endDate.getMilliseconds()).toString().padStart(3, '0'); // milliseconds
+  const str = `${HH}:${mm}:${ss}.${sss}`; // string
+  return str;
 }
 
 
@@ -93,9 +120,20 @@ function timeSpanToString(/* startDate, endDate */) {
  *    Date.UTC(2016,3,5, 3, 0) => Math.PI/2
  *    Date.UTC(2016,3,5,18, 0) => Math.PI
  *    Date.UTC(2016,3,5,21, 0) => Math.PI/2
+ *
+*  The hour hand of a normal 12-hour analogue clock turns 360° in 12 hours (720 minutes)
+   or 0.5° per minute.
+ * The minute hand rotates through 360° in 60 minutes or 6° per minute.
+   Equation for the angle of the hour hand 0.5°*(60*H + M)
+   Equation for the angle of the minute hand 6°* M
  */
-function angleBetweenClockHands(/* date */) {
-  throw new Error('Not implemented');
+function angleBetweenClockHands(date) {
+  const newDate = new Date(date);
+  const HH = newDate.getUTCHours() % 12; // часы utc
+  const mm = newDate.getUTCMinutes(); // минуты utc
+  let angle = Math.abs((60 * HH + mm) / 2 - 6 * mm); // формула вычисления угла, по модулю берем
+  angle = angle > 180 ? 360 - angle : angle; // тупой угол или острый
+  return (angle * Math.PI) / 180; // в радианы
 }
 
 
