@@ -27,9 +27,22 @@
  *    p3.then(answer => console.log(answer))
  *      .catch((error) => console.log(error.message)) // 'Error: Wrong parameter is passed!
  *                                                    //  Ask her again.';
+ * new Promise((resolveOuter) => {
+     resolveOuter(
+       new Promise((resolveInner) => {
+         setTimeout(resolveInner, 1000);
+       })
+     );
+   });
  */
-function willYouMarryMe(/* isPositiveAnswer */) {
-  throw new Error('Not implemented');
+function willYouMarryMe(isPositiveAnswer) {
+  return new Promise((resolveOuter, rejected) => {
+    if (typeof isPositiveAnswer === 'boolean') {
+      resolveOuter(isPositiveAnswer ? 'Hooray!!! She said "Yes"!' : 'Oh no, she said "No".');
+    } else {
+      rejected(new Error('Wrong parameter is passed! Ask her again.'));
+    }
+  });
 }
 
 
@@ -46,10 +59,23 @@ function willYouMarryMe(/* isPositiveAnswer */) {
  *    p.then((res) => {
  *      console.log(res) // => [1, 2, 3]
  *    })
- *
+ * =====================================
+ * Promise.all() static method takes an iterable of promises as input and returns a single Promise.
+ * Promise.all(iterable)
+ * ========================================
+ * const promise1 = Promise.resolve(3);
+ * const promise2 = 42;
+ * const promise3 = new Promise((resolve, reject) => {
+ * setTimeout(resolve, 100, 'foo');
+ * });
+
+ *Promise.all([promise1, promise2, promise3]).then((values) => {
+ * console.log(values);
+ * });
+ * expected output: Array [3, 42, "foo"]
  */
-function processAllPromises(/* array */) {
-  throw new Error('Not implemented');
+function processAllPromises(array) {
+  return Promise.all(array);
 }
 
 /**
@@ -69,10 +95,26 @@ function processAllPromises(/* array */) {
  *    p.then((res) => {
  *      console.log(res) // => [first]
  *    })
+ * The Promise.race() static method takes an iterable of promises
+ * as input and returns a single Promise. This returned promise settles
+ * with the eventual state of the first promise that settles.
  *
+   const promise1 = new Promise((resolve, reject) => {
+     setTimeout(resolve, 500, 'one');
+   });
+
+   const promise2 = new Promise((resolve, reject) => {
+     setTimeout(resolve, 100, 'two');
+   });
+
+   Promise.race([promise1, promise2]).then((value) => {
+     console.log(value);
+     // Both resolve, but promise2 is faster
+   });
+   // expected output: "two"
  */
-function getFastestPromise(/* array */) {
-  throw new Error('Not implemented');
+function getFastestPromise(array) {
+  return Promise.race(array);
 }
 
 /**
@@ -91,9 +133,21 @@ function getFastestPromise(/* array */) {
  *      console.log(res) // => 6
  *    });
  *
+ * new Promise((resolveOuter) => {
+     resolveOuter(
+       new Promise((resolveInner) => {
+         setTimeout(resolveInner, 1000);
+       })
+     );
+   });
  */
-function chainPromises(/* array, action */) {
-  throw new Error('Not implemented');
+function chainPromises(array, action) {
+  return new Promise((resolveOuter) => {
+    const result = [];
+    array.map((el) => el.then((res) => result.push(res)));
+
+    resolveOuter(result);
+  }).then((res) => res.reduce(action));
 }
 
 module.exports = {
