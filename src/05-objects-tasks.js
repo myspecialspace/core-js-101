@@ -20,8 +20,10 @@
  *    console.log(r.height);      // => 20
  *    console.log(r.getArea());   // => 200
  */
-function Rectangle(/* width, height */) {
-  throw new Error('Not implemented');
+function Rectangle(width, height) {
+  this.width = width;
+  this.height = height;
+  this.getArea = () => this.width * this.height;
 }
 
 
@@ -35,8 +37,8 @@ function Rectangle(/* width, height */) {
  *    [1,2,3]   =>  '[1,2,3]'
  *    { width: 10, height : 20 } => '{"height":10,"width":20}'
  */
-function getJSON(/* obj */) {
-  throw new Error('Not implemented');
+function getJSON(obj) {
+  return JSON.stringify(obj);
 }
 
 
@@ -50,9 +52,21 @@ function getJSON(/* obj */) {
  * @example
  *    const r = fromJSON(Circle.prototype, '{"radius":10}');
  *
+ * Object.create(proto[, descriptors]) – создаёт пустой объект
+ * со свойством [[Prototype]] , указанным как proto (может быть null)
+ * JSON.parse() разбирает строку JSON, возможно с преобразованием
+ * получаемого в процессе разбора значения.
+ * Object.assign() static method copies all enumerable own properties from one or more
+ * source objects to a target object. It returns the modified target object.
+ * Object.assign(target, ...sources)
+ * var obj = { a: 1 };
+   var copy = Object.assign({}, obj);
+   console.log(copy); // { a: 1 }
  */
-function fromJSON(/* proto, json */) {
-  throw new Error('Not implemented');
+function fromJSON(proto, json) {
+  const obj = Object.create(proto);
+  const parseObj = JSON.parse(json);
+  return Object.assign(obj, parseObj);
 }
 
 
@@ -110,33 +124,121 @@ function fromJSON(/* proto, json */) {
  *  For more examples see unit tests.
  */
 
+class Builder {
+  constructor() {
+    this.error1 = 'Element, id and pseudo-element should not occur more then one time inside the selector';
+    this.error2 = 'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element';
+
+    this.useElement = false;
+    this.useId = false;
+    this.usePseudoElement = false;
+
+    this.order = 0; // order number
+    this.value = '';
+  }
+
+  element(value) {
+    if (this.useElement) { throw new Error(this.error1); }
+    if (this.order > 1) { throw new Error(this.error2); }
+
+    this.order = 1;
+    this.value += value;
+    this.useElement = true;
+
+    return this;
+  }
+
+  id(value) {
+    if (this.useId) { throw new Error(this.error1); }
+    if (this.order > 2) { throw new Error(this.error2); }
+
+    this.order = 2;
+    this.value += `#${value}`;
+    this.useId = true;
+
+    return this;
+  }
+
+  class(value) {
+    if (this.order > 3) { throw new Error(this.error2); }
+
+    this.order = 3;
+    this.value += `.${value}`;
+
+    return this;
+  }
+
+  attr(value) {
+    if (this.order > 4) { throw new Error(this.error2); }
+
+    this.order = 4;
+    this.value += `[${value}]`;
+
+    return this;
+  }
+
+  pseudoClass(value) {
+    if (this.order > 5) { throw new Error(this.error2); }
+
+    this.order = 5;
+    this.value += `:${value}`;
+
+    return this;
+  }
+
+  pseudoElement(value) {
+    if (this.usePseudoElement) { throw new Error(this.error1); }
+    if (this.order > 6) { throw new Error(this.error2); }
+
+    this.order = 6;
+    this.value += `::${value}`;
+    this.usePseudoElement = true;
+
+    return this;
+  }
+
+  combine(selector1, combinator, selector2) {
+    this.value += `${selector1.value} ${combinator} ${selector2.value}`;
+
+    return this;
+  }
+
+  stringify() {
+    const selector = this.value;
+
+    this.value = '';
+
+    return selector;
+  }
+}
+
 const cssSelectorBuilder = {
-  element(/* value */) {
-    throw new Error('Not implemented');
+  element(value) {
+    return new Builder().element(value);
   },
 
-  id(/* value */) {
-    throw new Error('Not implemented');
+  id(value) {
+    return new Builder().id(value);
   },
 
-  class(/* value */) {
-    throw new Error('Not implemented');
+  class(value) {
+    return new Builder().class(value);
   },
 
-  attr(/* value */) {
-    throw new Error('Not implemented');
+  attr(value) {
+    return new Builder().attr(value);
   },
 
-  pseudoClass(/* value */) {
-    throw new Error('Not implemented');
+  pseudoClass(value) {
+    return new Builder().pseudoClass(value);
   },
 
-  pseudoElement(/* value */) {
-    throw new Error('Not implemented');
+  pseudoElement(value) {
+    return new Builder().pseudoElement(value);
   },
 
-  combine(/* selector1, combinator, selector2 */) {
-    throw new Error('Not implemented');
+  combine(elector1, combinator, selector2) {
+    return new Builder().combine(elector1, combinator, selector2);
   },
 };
 
